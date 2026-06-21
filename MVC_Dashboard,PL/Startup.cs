@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -12,6 +8,11 @@ using Microsoft.Extensions.Hosting;
 using MVC_Dashboard.BLL.Interfaces;
 using MVC_Dashboard.BLL.Repositories;
 using MVC_Dashboard.DAL.Data;
+using MVC_Dashboard.DAL.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace MVC_Dashboard_PL
 {
@@ -32,7 +33,9 @@ namespace MVC_Dashboard_PL
             services.AddDbContext<ApplicationDbContext>(option =>
                      option.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IGenericRepository<Department>, GenericRepository<Department>>();
+
+
 
         }
 

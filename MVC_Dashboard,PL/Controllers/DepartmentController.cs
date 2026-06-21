@@ -8,10 +8,10 @@ namespace MVC_Dashboard_PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IDepartmentRepository Repository;
+        private readonly IGenericRepository<Department> Repository;
         private readonly IWebHostEnvironment _env;
 
-        public DepartmentController( IDepartmentRepository _Repository, IWebHostEnvironment env)
+        public DepartmentController( IGenericRepository<Department> _Repository, IWebHostEnvironment env)
         {
             Repository = _Repository;
             _env = env;
