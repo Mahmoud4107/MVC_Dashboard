@@ -35,6 +35,7 @@ namespace MVC_Dashboard_PL
 
             services.AddScoped<IGenericRepository<Department>, GenericRepository<Department>>();
 
+            services.AddScoped<IEmployeeRepository, EmployeeRepository>();
 
 
         }
