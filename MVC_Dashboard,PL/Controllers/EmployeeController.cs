@@ -23,7 +23,6 @@ namespace MVC_Dashboard_PL.Controllers
 
         // Employee/index
         [HttpGet]
-        [ValidateAntiForgeryToken]
         public IActionResult Index()
         {
             var Employees = _repository.GetAll();

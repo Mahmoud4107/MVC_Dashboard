@@ -23,7 +23,7 @@ namespace MVC_Dashboard.DAL.Data.Configuration
 
             builder.Property(E => E.EmployeeType)
                    .HasConversion(Emp => Emp.ToString(),
-                                  EmpToString => (EmpType)Enum.Parse(typeof(Employee), EmpToString, true));
+                                  EmpToString => (EmpType)Enum.Parse(typeof(EmpType), EmpToString, true));
         }
     }
 }

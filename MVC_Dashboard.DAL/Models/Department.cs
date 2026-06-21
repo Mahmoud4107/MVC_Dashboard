@@ -9,10 +9,9 @@ namespace MVC_Dashboard.DAL.Models
 {
     public class Department : ModelBase
     {
-        public int Id { get; set; }
-
         [Required(ErrorMessage = "Code Is Required Ya 7oda")]
         public int? Code { get; set; }
+        [Required(ErrorMessage = "Name Is Required")]
         public string Name { get; set; }
         [Display(Name = "Date Of Creation")]
         public DateTime DateOfCreation { get; set; }
