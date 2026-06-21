@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MVC_Dashboard.DAL.Models
 {
-    public class Department
+    public class Department : ModelBase
     {
         public int Id { get; set; }
 
