@@ -5,6 +5,7 @@ using MVC_Dashboard.DAL.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -21,5 +22,9 @@ namespace MVC_Dashboard.BLL.Repositories
             return _context.Employees.Where(E => E.Address.ToLower() == address.ToLower()).FirstOrDefault();
         }
 
+        public IQueryable<Employee> SearchByName(string Name)
+        {
+            return _context.Employees.Where(E => E.Name.ToLower() == Name);
+        }
     }
 }

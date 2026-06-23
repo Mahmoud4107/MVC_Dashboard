@@ -1,12 +1,14 @@
 ﻿
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.CodeAnalysis.Differencing;
 using Microsoft.Extensions.Hosting;
 using MVC_Dashboard.BLL.Interfaces;
 using MVC_Dashboard.BLL.Repositories;
 using MVC_Dashboard.DAL.Models;
 using System;
+using System.Linq;
 
 namespace MVC_Dashboard_PL.Controllers
 {
@@ -22,10 +24,16 @@ namespace MVC_Dashboard_PL.Controllers
         }
 
         // Employee/index
-        [HttpGet]
-        public IActionResult Index()
+        public IActionResult Index(string searchInput)
         {
-            var Employees = _repository.GetAll();
+            var Employees = Enumerable.Empty<Employee>();
+            if(searchInput is null)
+            {
+                Employees = _repository.GetAll();
+            }
+                
+            else
+                 Employees = _repository.SearchByName(searchInput.ToLower());
             return View(Employees);
         }
 
