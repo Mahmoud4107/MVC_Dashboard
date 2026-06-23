@@ -20,7 +20,13 @@ namespace MVC_Dashboard.BLL.Repositories
         }
 
         public IEnumerable<T> GetAll()
-            => _context.Set<T>().AsNoTracking().ToList();
+        {
+            if(typeof(T) == typeof(Employee))
+                return (IEnumerable<T>)_context.Employees.Include(E => E.Department).AsNoTracking().ToList();
+            else
+                return _context.Set<T>().AsNoTracking().ToList();
+        }
+            
         public T GetById(int id)
         {
             return _context.Set<T>().Find(id);

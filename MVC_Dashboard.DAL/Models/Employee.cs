@@ -57,7 +57,7 @@ namespace MVC_Dashboard.DAL.Models
 
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
-        public int DepartmentId { get; set; } // Foreign Key
+        public int? DepartmentId { get; set; } // Foreign Key
         public Department Department { get; set; }
     }
 }
