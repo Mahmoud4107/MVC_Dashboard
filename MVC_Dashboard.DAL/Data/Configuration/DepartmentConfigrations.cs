@@ -19,7 +19,6 @@ namespace MVC_Dashboard.DAL.Data.Configuration
 
             builder.HasMany(D => D.Employees)
                    .WithOne(E => E.Department)
-                   .HasForeignKey(E => E.DepartmentId)
                    .OnDelete(DeleteBehavior.Cascade);
         }
     }

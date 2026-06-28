@@ -34,7 +34,6 @@ namespace MVC_Dashboard.DAL.Models
         public EmpType EmployeeType { get; set; }
         public Gender Gender { get; set; }
         public DateTime CreationDate { get; set; } = DateTime.Now;
-        public int? DepartmentId { get; set; } 
         public Department Department { get; set; }
     }
 }
