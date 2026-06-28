@@ -31,20 +31,17 @@ namespace MVC_Dashboard.BLL.Repositories
         {
             return _context.Set<T>().Find(id);
         }
-        public int Add(T entity)
+        public void Add(T entity)
         {
             _context.Add(entity);
-            return _context.SaveChanges();
         }
-        public int Delete(T entity)
+        public void Delete(T entity)
         {
             _context.Remove(entity);
-            return _context.SaveChanges();
         }
-        public int Update(T entity)
+        public void Update(T entity)
         {
             _context.Update(entity);
-            return _context.SaveChanges();
         }
     }
 }

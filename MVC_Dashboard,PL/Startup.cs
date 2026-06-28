@@ -5,10 +5,12 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using MVC_Dashboard.BLL;
 using MVC_Dashboard.BLL.Interfaces;
 using MVC_Dashboard.BLL.Repositories;
 using MVC_Dashboard.DAL.Data;
 using MVC_Dashboard.DAL.Models;
+using MVC_Dashboard_PL.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,6 +38,10 @@ namespace MVC_Dashboard_PL
             services.AddScoped<IGenericRepository<Department>, GenericRepository<Department>>();
 
             services.AddScoped<IEmployeeRepository, EmployeeRepository>();
+
+            services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
+
+            services.AddScoped<IUnitOfWork, UnitOfWork>();
 
 
         }

@@ -1,8 +1,8 @@
-﻿@model Employee
+﻿@model EmployeeViewModel
 
-@inject IGenericRepository<Department> _departmentRepo
+@inject IUnitOfWork _Unit
 @{
-	var departments = new SelectList(_departmentRepo.GetAll(), nameof(Department.Id), nameof(Department.Name));
+	var departments = new SelectList(_Unit.Repository<Employee>().GetAll(), nameof(Department.Id), nameof(Department.Name));
 }
 
 	<div class="form-group">

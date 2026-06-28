@@ -7,12 +7,9 @@ using System.Threading.Tasks;
 
 namespace MVC_Dashboard.BLL.Interfaces
 {
-    public interface IGenericRepository<T>
+    public interface IUnitOfWork
     {
-        IEnumerable<T> GetAll();
-        T GetById(int id);
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
+        IGenericRepository<T> Repository<T>() where T : ModelBase;
+        int Complete();
     }
 }

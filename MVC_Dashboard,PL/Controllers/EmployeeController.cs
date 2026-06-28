@@ -1,4 +1,4 @@
-﻿
+﻿using AutoMapper;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
@@ -7,19 +7,24 @@ using Microsoft.Extensions.Hosting;
 using MVC_Dashboard.BLL.Interfaces;
 using MVC_Dashboard.BLL.Repositories;
 using MVC_Dashboard.DAL.Models;
+using MVC_Dashboard_PL.ViewModels;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace MVC_Dashboard_PL.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly IEmployeeRepository _repository;
+        private readonly IMapper _mapper;
+        public IUnitOfWork _unit { get; }
         public IWebHostEnvironment _env { get; }
 
-        public EmployeeController(IEmployeeRepository repository, IWebHostEnvironment env) // ASK CLR to create object from EmployeeRepository
+        public EmployeeController(IMapper mapper,IUnitOfWork unit, IWebHostEnvironment env) // ASK CLR to create object from EmployeeRepository
         {
-            _repository = repository;
+            _mapper = mapper;
+            _unit = unit;
             _env = env;
         }
 
@@ -28,13 +33,17 @@ namespace MVC_Dashboard_PL.Controllers
         {
             var Employees = Enumerable.Empty<Employee>();
             if(searchInput is null)
-            {
-                Employees = _repository.GetAll();
-            }
+                Employees = _unit.Repository<Employee>().GetAll();
                 
             else
-                 Employees = _repository.SearchByName(searchInput.ToLower());
-            return View(Employees);
+            {
+                var Emplyee = _unit.Repository<Employee>() as EmployeeRepository;
+                Employees = Emplyee.SearchByName(searchInput.ToLower());
+            }
+
+            var MappedEmp = _mapper.Map<IEnumerable<Employee>, IEnumerable<EmployeeViewModel>>(Employees);
+
+            return View(MappedEmp);
         }
 
         // Employee/Create
@@ -45,13 +54,15 @@ namespace MVC_Dashboard_PL.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Create(Employee employee)
+        public IActionResult Create(EmployeeViewModel employeeViwModel)
         {
+            var MappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeViwModel);
             try
             {
                 if (ModelState.IsValid)
                 {
-                    int Count = _repository.Add(employee);
+                     _unit.Repository<Employee>().Add(MappedEmp);
+                    int Count = _unit.Complete();
 
                     if (Count > 0)
                         return RedirectToAction(nameof(Index));
@@ -65,7 +76,7 @@ namespace MVC_Dashboard_PL.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "An Error Occurred During Creating This Employee"); // Friendly Message
             }
-            return View(employee);
+            return View(MappedEmp);
 
         }
         // Employee/Details/id?
@@ -75,12 +86,14 @@ namespace MVC_Dashboard_PL.Controllers
             if (id == null)
                 return BadRequest();
 
-            var employee = _repository.GetById(id.Value);
+            var employee = _unit.Repository<Employee>().GetById(id.Value);
 
-            if (employee == null)
+            var MappedEmp = _mapper.Map<Employee, EmployeeViewModel>(employee);
+
+            if (MappedEmp == null)
                 return NotFound();
 
-            return View(employee);
+            return View(MappedEmp);
         }
 
         // Employee/Edit/id?
@@ -92,15 +105,19 @@ namespace MVC_Dashboard_PL.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult Edit([FromRoute] int? id, Employee employee)
+        public IActionResult Edit([FromRoute] int? id, EmployeeViewModel employeeViewModel)
         {
-            if (id != employee.Id)
+            if (id != employeeViewModel.Id)
                 return BadRequest();
+
+            var MappedEmp = _mapper.Map<EmployeeViewModel,Employee>(employeeViewModel);
+
             try
             {
                 if (ModelState.IsValid)
                 {
-                    var Count = _repository.Update(employee);
+                    _unit.Repository<Employee>().Update(MappedEmp);
+                    int Count = _unit.Complete();
                     if (Count > 0)
                         return RedirectToAction(nameof(Index));
                 }
@@ -113,7 +130,7 @@ namespace MVC_Dashboard_PL.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "An Error Occurred During Updating This Employee"); // Friendly Message
             }
-            return View(employee);
+            return View(MappedEmp);
         }
 
         //Employee/Delete/id?
@@ -125,13 +142,16 @@ namespace MVC_Dashboard_PL.Controllers
 
         [HttpPost]
         [AutoValidateAntiforgeryToken]
-        public IActionResult Delete([FromRoute] int? id,Employee employee)
+        public IActionResult Delete([FromRoute] int? id,EmployeeViewModel employeeViewModel)
         {
-            if (id != employee.Id)
+            if (id != employeeViewModel.Id)
                 return BadRequest();
+
+            var MappedEmp = _mapper.Map<EmployeeViewModel, Employee>(employeeViewModel);
             try
             {
-                var Count = _repository.Delete(employee);
+                _unit.Repository<Employee>().Delete(MappedEmp);
+                int Count = _unit.Complete();
                 if (Count > 0)
                     return RedirectToAction(nameof(Index));
             }
@@ -144,7 +164,7 @@ namespace MVC_Dashboard_PL.Controllers
                 else
                     ModelState.AddModelError(string.Empty, "An Error Occurred During Updating This Employee"); // Friendly Message
             }
-            return View(employee);
+            return View(MappedEmp);
         }
     }
 }

@@ -8,17 +8,17 @@ namespace MVC_Dashboard_PL.Controllers
 {
     public class DepartmentController : Controller
     {
-        private readonly IGenericRepository<Department> Repository;
+        private readonly IUnitOfWork _unit;
         private readonly IWebHostEnvironment _env;
 
-        public DepartmentController( IGenericRepository<Department> _Repository, IWebHostEnvironment env)
+        public DepartmentController(IUnitOfWork unit,IWebHostEnvironment env)
         {
-            Repository = _Repository;
+            _unit = unit;
             _env = env;
         }
         public IActionResult Index()
         {
-            var departments = Repository.GetAll();
+            var departments = _unit.Repository<Department>().GetAll();
 
             return View(departments);
         }
@@ -32,8 +32,9 @@ namespace MVC_Dashboard_PL.Controllers
         {
               if(ModelState.IsValid) // Server Side Validation 
               {
-                int count = Repository.Add(department);
+                _unit.Repository<Department>().Add(department);
 
+                int count = _unit.Complete();
                 if (count > 0)
                     return RedirectToAction(nameof(Index));
               }
@@ -46,7 +47,7 @@ namespace MVC_Dashboard_PL.Controllers
             if (id == null)
                 return BadRequest(); // 400
 
-            var department = Repository.GetById(id.Value);
+            var department = _unit.Repository<Department>().GetById(id.Value);
 
             if (department == null)
                 return NotFound();  //  404
@@ -77,8 +78,11 @@ namespace MVC_Dashboard_PL.Controllers
                 return View(department);
             try
             {
-                Repository.Update(department);
-                return RedirectToAction(nameof(Index));
+                _unit.Repository<Department>().Update(department);
+                
+                int Count = _unit.Complete();
+                if (Count > 0)
+                    return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -92,6 +96,7 @@ namespace MVC_Dashboard_PL.Controllers
 
                 return View(department);
             }
+            return View(department);
 
         }
 
@@ -117,8 +122,11 @@ namespace MVC_Dashboard_PL.Controllers
                 return BadRequest();
             try
             {
-                Repository.Delete(department);
-                return RedirectToAction(nameof(Index));
+                _unit.Repository<Department>().Delete(department);
+
+                int Count = _unit.Complete();
+                if (Count > 0)
+                    return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
             {
@@ -133,6 +141,7 @@ namespace MVC_Dashboard_PL.Controllers
                 return View("department");
 
             }
+            return View(department);
         }
 
 
