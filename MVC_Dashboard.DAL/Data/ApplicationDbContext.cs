@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace MVC_Dashboard.DAL.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         public ApplicationDbContext(DbContextOptions option):base(option) // Ask CLR to create object from DbContextOptions
         {

@@ -1,10 +1,12 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using MVC_Dashboard.BLL;
 using MVC_Dashboard.BLL.Interfaces;
 using MVC_Dashboard.BLL.Repositories;
@@ -43,7 +45,23 @@ namespace MVC_Dashboard_PL
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.Password.RequiredUniqueChars = 2;
+                options.Password.RequireDigit = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequiredLength = 5;
 
+                options.Lockout.AllowedForNewUsers = true;
+                options.Lockout.MaxFailedAccessAttempts = 5;
+                options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(5);
+
+                options.User.RequireUniqueEmail = true;
+            }).AddEntityFrameworkStores<ApplicationDbContext>();
+
+            //services.AddAuthentication(); // This Servises already registerd in AddIdentity
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
