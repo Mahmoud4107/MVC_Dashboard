@@ -55,12 +55,40 @@ namespace MVC_Dashboard_PL.Controllers
             }
 
             return View(ViewModel);
-                
+
         }
         public IActionResult SignIn()
         {
             return View();
         }
+        [HttpPost]
+        public async Task<IActionResult> SignIn(SignInViewModel ViewModel)
+        {
+            if(ModelState.IsValid)
+            {
+                var user = await _userManager.FindByEmailAsync(ViewModel.Email);
+
+                if (user is not null)
+                {
+                    var flag = await _userManager.CheckPasswordAsync(user,ViewModel.Password);
+
+                    if (flag is true)
+                    {
+                        var result = await _SignInManager.PasswordSignInAsync(user, ViewModel.Password, ViewModel.RememberMe, false);
+
+                        if (result.IsLockedOut)
+                            ModelState.AddModelError(string.Empty, "This Email Is Locked!!");
+
+                        if (result.Succeeded)
+                            return RedirectToAction(nameof(HomeController.Index), "Home");
+                    }
+                    ModelState.AddModelError(string.Empty, "InCorrect Password");
+                }
+                else
+                    ModelState.AddModelError(string.Empty, "No Account With This Email");
+            }
+            return View(ViewModel);
+            }
 
     }
 }

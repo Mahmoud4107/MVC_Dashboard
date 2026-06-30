@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
@@ -45,6 +46,10 @@ namespace MVC_Dashboard_PL
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
+            //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+            //                     .AddCookie(options =>{ options.LoginPath = "/Account/SignIn"; });
+            
+
             services.AddIdentity<ApplicationUser, IdentityRole>(options =>
             {
                 options.Password.RequiredUniqueChars = 2;
@@ -61,7 +66,23 @@ namespace MVC_Dashboard_PL
                 options.User.RequireUniqueEmail = true;
             }).AddEntityFrameworkStores<ApplicationDbContext>();
 
-            //services.AddAuthentication(); // This Servises already registerd in AddIdentity
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Account/SignIn";
+                options.AccessDeniedPath = "/Home/Error";
+                options.LogoutPath = "/Account/SignIn";
+                options.ExpireTimeSpan = TimeSpan.FromMinutes(30);
+            });
+
+            //services.AddAuthentication(); // This Overload => already registerd in AddIdentity
+
+            //services.AddAuthentication(options =>
+            //{
+            //    options.DefaultAuthenticateScheme = "Identity.Application"; // By Default
+            //    options.
+            //});
+
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -82,8 +103,9 @@ namespace MVC_Dashboard_PL
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
-
+                
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
