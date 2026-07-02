@@ -14,6 +14,8 @@ using MVC_Dashboard.BLL.Repositories;
 using MVC_Dashboard.DAL.Data;
 using MVC_Dashboard.DAL.Models;
 using MVC_Dashboard_PL.Helpers;
+using MVC_Dashboard_PL.Services.EmailSender;
+using MVC_Dashboard_PL.Services.SendEmail;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,6 +47,7 @@ namespace MVC_Dashboard_PL
             services.AddAutoMapper(M => M.AddProfile(new MappingProfiles()));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
+            services.AddTransient<IEmailSender, EmailSender>();
 
             //services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
             //                     .AddCookie(options =>{ options.LoginPath = "/Account/SignIn"; });
@@ -64,7 +67,8 @@ namespace MVC_Dashboard_PL
                 options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(5);
 
                 options.User.RequireUniqueEmail = true;
-            }).AddEntityFrameworkStores<ApplicationDbContext>();
+            }).AddEntityFrameworkStores<ApplicationDbContext>()
+              .AddDefaultTokenProviders();
 
             services.ConfigureApplicationCookie(options =>
             {
